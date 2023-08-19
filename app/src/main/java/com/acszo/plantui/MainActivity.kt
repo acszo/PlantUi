@@ -5,17 +5,20 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.MoreVert
@@ -38,6 +41,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import com.acszo.plantui.ui.theme.PlantUiTheme
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
@@ -47,6 +51,11 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
+        ViewCompat.setOnApplyWindowInsetsListener(window.decorView) { v, insets ->
+            v.setPadding(0, 0, 0, 0)
+            insets
+        }
+
         setContent {
             PlantUiTheme {
                 val systemUiController = rememberSystemUiController()
@@ -95,96 +104,117 @@ class MainActivity : ComponentActivity() {
                                 }
                             }
                         )
-                    }
+                    },
+                    contentWindowInsets = WindowInsets(0, 0, 0, 0),
                 ) {
-                    Column(
-                        modifier = Modifier
-                            .padding(it)
-                            .verticalScroll(rememberScrollState()),
+                    LazyColumn(
+                        modifier = Modifier.padding(it),
+                        verticalArrangement = Arrangement.spacedBy(10.dp),
+                        contentPadding = WindowInsets.systemBars.asPaddingValues(),
                     ) {
-                        Text(
-                            text = "Monstera\nUnique",
-                            modifier = Modifier.fillMaxWidth(),
-                            textAlign = TextAlign.Center,
-                            style = MaterialTheme.typography.displayLarge,
-                        )
-                        Image(
-                            painterResource(
-                                id = R.drawable.plant
-                            ),
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 25.dp, vertical = 10.dp),
-                            contentScale = ContentScale.Crop,
-                            contentDescription = "Plant",
-                        )
-                        LazyRow(
-                            contentPadding = PaddingValues(18.dp, 5.dp, 18.dp, 5.dp)
-                        ) {
-                            items(items = listCard) { item ->
-                                Card(
-                                    modifier = Modifier
-                                        .height(145.dp)
-                                        .width(135.dp)
-                                        .padding(8.dp),
-                                    colors = CardDefaults.cardColors(
-                                        containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-                                    ),
-                                ) {
-                                    Column(
-                                        modifier = Modifier.padding(10.dp)
+                        item {
+                            Text(
+                                text = "Monstera\nUnique",
+                                modifier = Modifier.fillMaxWidth(),
+                                textAlign = TextAlign.Center,
+                                style = MaterialTheme.typography.displayLarge,
+                            )
+                        }
+
+                        item {
+                            Image(
+                                painterResource(
+                                    id = R.drawable.plant
+                                ),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 25.dp, vertical = 10.dp),
+                                contentScale = ContentScale.Crop,
+                                contentDescription = "Plant",
+                            )
+                        }
+
+                        item {
+                            LazyRow(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.Center,
+                                contentPadding = PaddingValues(horizontal = 18.dp)
+                            ) {
+                                items(items = listCard) { item ->
+                                    Card(
+                                        modifier = Modifier
+                                            .height(145.dp)
+                                            .width(135.dp)
+                                            .padding(8.dp),
+                                        colors = CardDefaults.cardColors(
+                                            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+                                        ),
                                     ) {
-                                        Icon(
-                                            painter = painterResource(id = item.icon),
-                                            contentDescription = null,
-                                        )
-                                        Text(
-                                            text = item.title,
-                                            modifier = Modifier
-                                                .padding(0.dp, 10.dp, 0.dp, 0.dp),
-                                            style = MaterialTheme.typography.titleSmall,
-                                        )
-                                        Text(
-                                            text = item.description,
-                                            modifier = Modifier
-                                                .padding(0.dp, 5.dp, 0.dp, 0.dp),
-                                            style = MaterialTheme.typography.bodySmall,
-                                        )
+                                        Column(
+                                            modifier = Modifier.padding(10.dp)
+                                        ) {
+                                            Icon(
+                                                painter = painterResource(id = item.icon),
+                                                contentDescription = null,
+                                            )
+                                            Text(
+                                                text = item.title,
+                                                modifier = Modifier.padding(0.dp, 10.dp, 0.dp, 0.dp),
+                                                style = MaterialTheme.typography.titleSmall,
+                                            )
+                                            Text(
+                                                text = item.description,
+                                                modifier = Modifier.padding(0.dp, 5.dp, 0.dp, 0.dp),
+                                                style = MaterialTheme.typography.bodySmall,
+                                            )
+                                        }
                                     }
                                 }
                             }
                         }
-                        Text(
-                            text = "Care",
-                            modifier = Modifier.padding(25.dp, 10.dp, 0.dp, 0.dp),
-                            style = MaterialTheme.typography.headlineSmall,
-                        )
+
+                        item {
+                            Text(
+                                modifier = Modifier.padding(horizontal = 25.dp),
+                                text = "Care",
+                                style = MaterialTheme.typography.headlineSmall,
+                            )
+                        }
+
                         listColumn.forEach {
-                            Row(
-                                modifier = Modifier.padding(25.dp, 10.dp, 0.dp, 0.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Icon(
-                                    painter = painterResource(id = it.icon),
-                                    modifier = Modifier.padding(25.dp, 0.dp, 25.dp, 0.dp),
-                                    contentDescription = null,
-                                )
-                                Text(
-                                    text = it.description,
-                                    style = MaterialTheme.typography.bodyLarge,
-                                )
+                            item {
+                                Row(
+                                    modifier = Modifier.padding(horizontal = 25.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Icon(
+                                        modifier = Modifier.padding(horizontal = 25.dp),
+                                        painter = painterResource(id = it.icon),
+                                        contentDescription = null,
+                                    )
+                                    Text(
+                                        text = it.description,
+                                        style = MaterialTheme.typography.bodyLarge,
+                                    )
+                                }
                             }
                         }
-                        Text(
-                            text = "About",
-                            modifier = Modifier.padding(25.dp, 20.dp, 0.dp, 0.dp),
-                            style = MaterialTheme.typography.headlineSmall,
-                        )
-                        Text(
-                            text = "They are herbs or evergreen vines, growing to heights of 20 metres (66 ft) in trees, climbing by means of aerial roots which act as hooks over branches; these roots will also grow into the soil to help support the plant. Since the plant roots both into the soil and over trees, it is considered a hemiepiphyte.",
-                            modifier = Modifier.padding(25.dp, 10.dp, 25.dp, 20.dp),
-                            style = MaterialTheme.typography.bodyLarge,
-                        )
+
+                        item {
+                            Text(
+                                modifier = Modifier.padding(horizontal = 25.dp),
+                                text = "About",
+                                style = MaterialTheme.typography.headlineSmall,
+                            )
+                        }
+
+                        item {
+                            Text(
+                                modifier = Modifier.padding(horizontal = 25.dp),
+                                text = "They are herbs or evergreen vines, growing to heights of 20 metres (66 ft) in trees, climbing by means of aerial roots which act as hooks over branches; these roots will also grow into the soil to help support the plant. Since the plant roots both into the soil and over trees, it is considered a hemiepiphyte.",
+                                style = MaterialTheme.typography.bodyLarge,
+                            )
+                        }
                     }
                 }
             }
